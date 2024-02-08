@@ -3,6 +3,10 @@ permalink: /about/
 title: "About"
 ---
 
-Tempor velit sint sunt ipsum tempor enim ad qui ullamco. Est dolore anim ad velit duis dolore minim sunt aliquip amet commodo labore. Ut eu pariatur aute ea aute excepteur laborum. Esse ea esse excepteur minim mollit qui cillum excepteur ex dolore magna. Labore deserunt fugiat incididunt incididunt sint ea. Consequat dolore aute laboris quis proident quis non et est consectetur ex eiusmod sit culpa.
+This blog serves a few different purposes.
+1. Writing a blog post about a topic forces me to make sure I properly
+understand it myself.
+2. Having these explanations on hand helps my future self re-learn these topics (once that understanding fades into a groggy memory).
+3. Hopefully, writing primarily meant for my future self will still be intelligible (even useful) to other Internet denizens as well.
 
-Cupidatat ea do et in excepteur in. Ad nostrud ut est esse eu duis ea sunt eiusmod. Aliquip tempor veniam sint elit fugiat. Velit incididunt laboris amet incididunt labore dolore irure velit excepteur commodo deserunt laborum. Consectetur eu fugiat veniam veniam Lorem labore magna eiusmod. Ea occaecat reprehenderit pariatur consectetur minim labore ut aliquip.
+While these posts have associated dates (describing when I first posted them), their content will not necessarily be static over time. As my understanding of a topic changes, I may substantially revise old posts far after their original publication date. With this in mind, new posts will likely be quite unpolished: recent content should be seen as an early draft.
