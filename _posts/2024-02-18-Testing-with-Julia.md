@@ -11,7 +11,7 @@ Fortunately, there’s a way around Julia’s long startup times: the `Revise` m
 ```julia
 Pkg.activate("test")
 using Revise
-Revise.entr([]; all=true) do
+Revise.entr(["test"]; all=true) do
     include("test/runtests.jl")
 end
 ```
