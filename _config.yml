@@ -58,9 +58,8 @@ author:
   name   : "Sam Anklesaria"
   avatar : "/assets/images/bio-photo.jpg"
   bio: >-
-    PhD student in computer science at UT Austin.
-    Interested in fast approximations for
-    Bayesian inference on large datasets.
+    Statistical Researcher at [*Planting Space*](http://planting.space).
+    Interested in Bayesian approaches to causal inference.
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"

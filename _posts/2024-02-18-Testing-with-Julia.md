@@ -14,7 +14,7 @@ dev .
 instantiate
 ```
 
-From here on out, it you can test with
+From here on out, you can test with
 
 ```julia
 ] activate test
