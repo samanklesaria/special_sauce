@@ -59,7 +59,7 @@ author:
   avatar : "/assets/images/bio-photo.jpg"
   bio: >-
     Statistical Researcher at [*Planting Space*](http://planting.space).
-    Interested in Bayesian approaches to causal inference.
+    Interested in explainable models and causal inference.
   links:
     - label: "GitHub"
       icon: "fab fa-fw fa-github"

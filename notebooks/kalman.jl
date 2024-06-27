@@ -236,7 +236,7 @@ md"As we can see, although the robot's trajectory did not follow our dynamics mo
 
 # ╔═╡ Cell order:
 # ╟─413bc746-f283-11ee-363b-b9a2b9e4b0af
-# ╟─f9c28b2a-61f9-44de-a886-a56446e56659
+# ╠═f9c28b2a-61f9-44de-a886-a56446e56659
 # ╟─c17dd4df-91c0-4a52-b1e9-13d952cee2e4
 # ╟─7151ec42-400d-43e3-9b33-06660a426abe
 # ╠═7c298844-f4f3-4b93-8bd8-98967280f217

@@ -31,7 +31,7 @@ $$
 
 The KL divergence isn’t the only way to measure distance between distributions. In fact, it’s not a particularly flexible way, as it only lets us compare our discrete distribution $q$ with other discrete distributions $\pi$. Instead, we can minimize the “maximum mean discrepancy” or MMD. The big idea is to choose $q$ to make $E_{X \sim q}f(X)$ as close as possible to $E_{X \sim \pi} f(X)$ for all functions $f$ in some space $\mathcal{H}$. 
 $$
-\text{MMD} \coloneqq \sup_{f \in \mathcal{H}, \|f\| \leq 1} (E_{X \sim \pi} f(X) - E_{X \sim q} f(X))^2
+\text{MMD} = \sup_{f \in \mathcal{H}, \|f\| \leq 1} (E_{X \sim \pi} f(X) - E_{X \sim q} f(X))^2
 $$
 If we assume that $\mathcal{H}$ is closed under negation, squaring this difference won't change the optimal distribution $q^*$ minimizing the expression, so we can equivalently write this as 
 $$

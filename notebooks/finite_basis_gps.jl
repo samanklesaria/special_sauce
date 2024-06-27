@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.38
+# v0.19.42
 
 using Markdown
 using InteractiveUtils
@@ -26,13 +26,29 @@ end
 
 # ╔═╡ 8c973260-b0a0-49fe-9b18-7dd8ee6d467b
 md"""
-We will use the *weight space* view of Gaussian processes, which interprets GP regression as Bayesian linear regression. We assume that there is a weight vector $w : \mathcal{V}$ with prior $\mathcal{N}(0, I)$, and that $y \sim \mathcal{N}(X w, \Sigma)$, where $X$ is the matrix for which row $i$ is given by $\phi(x_i)$. 
-The posterior over $w$ remains Gaussian with precision $\Lambda = I + X^T\Sigma X$ and mean $\Lambda^{-1} X^T \Sigma y$. To make a prediction at $x_*$, we simply find $\langle \phi(x_*), w \rangle$. 
+We will use the *weight space* view of Gaussian processes, which interprets GP regression as Bayesian linear regression. We assume that there is a weight vector $w : \mathcal{V}$ with prior $\mathcal{N}(0, I)$, and that $y \sim \mathcal{N}(X w, I)$, where $X$ is the matrix for which row $i$ is given by $\phi(x_i)$. 
+The posterior over $w$ remains Gaussian with precision $\Lambda = I + X^T X$ and mean $\mu = \Lambda^{-1} X^T y$. To make a prediction at $x_*$, we simply find $\langle \phi(x_*), w \rangle$. 
 """
 
 # ╔═╡ 8770765c-e519-4cd7-9eed-da2b50190895
 md"""
-On the face of it, this seems like a very different generative model than the traditional depiction of Gaussian processes in which the observations $y$ are noisy versions of the function values $f$, which are all jointly Gaussian with a covariance matrix given by the associated kernel. But with a little algebra, one can show that the posterior over $\langle \phi(x_*), w \rangle$ in the weight space view is the same as the posterior over $f(x^*)$ is the traditional function-space view. See the first chapter of the [Rasmussen book](http://gaussianprocess.org/gpml/) if you're interested in the deriation.
+On the face of it, this seems like a very different generative model than the traditional depiction of Gaussian processes in which the observations $y$ are noisy versions of the function values $f$, which are all jointly Gaussian with a covariance matrix given by the associated kernel. But with a little algebra, one can show that the posterior over $f(x_*) = \langle \phi(x_*), w \rangle$ in the weight space view is the same as the posterior over $f(x_*)$ is the traditional function-space view. 
+
+First, we can marginalize out $w$ to find that
+
+```math
+f(x_*) | y \sim \mathcal{N}(X_* \mu, X_* \Lambda^{-1} X_*^T)
+```
+The mean expands to $X_*(I + X^T X)^{-1} X^T y$ and the variance expands to 
+$X_*(I + X^T X)^{-1}X_*^T$.
+
+
+Now, we can use the Woodbury Matrix Identity, which says that
+```math
+(I + X^TX)^{-1} = I - X^T(I + XX^T)^{-1}X
+```
+This lets the mean simplify to
+$X_*X^T (XX^T + I)^{-1}y$ and the variance simplify to $X_*X_*^T -X_*X^T(XX^T + I)^{-1}XX_*^T$. Letting $XX^T = K$, we recover the familiar function space representation of Gaussian process. See the first chapter of the [Rasmussen book](http://gaussianprocess.org/gpml/) for a more detailed derivation. 
 """
 
 # ╔═╡ ca1fa3bc-c6a8-400a-93ed-850821f57b1f
@@ -186,7 +202,7 @@ KernelFunctions = "~0.10.63"
 PLUTO_MANIFEST_TOML_CONTENTS = """
 # This file is machine-generated - editing it directly is not advised
 
-julia_version = "1.10.0"
+julia_version = "1.10.3"
 manifest_format = "2.0"
 project_hash = "e3677c9dbe6e4b0491e96402c6c2b131808fe07e"
 
@@ -257,7 +273,7 @@ weakdeps = ["Dates", "LinearAlgebra"]
 [[deps.CompilerSupportLibraries_jll]]
 deps = ["Artifacts", "Libdl"]
 uuid = "e66e0078-7015-5450-92f7-15fbd957f2ae"
-version = "1.0.5+1"
+version = "1.1.1+0"
 
 [[deps.CompositionsBase]]
 git-tree-sha1 = "802bb88cd69dfd1509f6670416bd4434015693ad"
@@ -474,7 +490,7 @@ version = "1.2.0"
 [[deps.OpenBLAS_jll]]
 deps = ["Artifacts", "CompilerSupportLibraries_jll", "Libdl"]
 uuid = "4536629a-c528-5b80-bd46-f80d51c5b363"
-version = "0.3.23+2"
+version = "0.3.23+4"
 
 [[deps.OpenLibm_jll]]
 deps = ["Artifacts", "Libdl"]
@@ -698,7 +714,7 @@ version = "17.4.0+2"
 """
 
 # ╔═╡ Cell order:
-# ╠═b18c628c-cced-11ee-0033-51bdcc63c29c
+# ╟─b18c628c-cced-11ee-0033-51bdcc63c29c
 # ╠═e1e011e8-3e91-4317-a081-9a23f39349c8
 # ╠═cd5118fc-1129-467e-be5e-9f786fa114f3
 # ╟─8c973260-b0a0-49fe-9b18-7dd8ee6d467b
