@@ -63,11 +63,11 @@ Each of these are cofactors are triangular. The determinant of a triangular matr
 
 This simplifies to the *characteristic equation* $\lambda^4 = a_1 \lambda^3 + a_2 \lambda^2 + a_3 \lambda + a_4$, which can be easily read off the top row of the matrix. 
 
-When differential equations are written in the form $ay’’ + by’ + cy = 0$, this means we’re solving a system like this:
+When differential equations are written in the form $au’’ + bu’ + cu = 0$, this means we’re solving a system like this:
 $$
 \begin{pmatrix}
-y'' \\
-y' \\
+u'' \\
+u' \\
 \end{pmatrix}
 =
 \begin{pmatrix}
@@ -75,11 +75,27 @@ y' \\
 1 & 0 \\
 \end{pmatrix}
 \begin{pmatrix}
-y' \\
-y
+u' \\
+u
 \end{pmatrix}
 $$
 We get $(-b/a - \lambda)(-\lambda) + c/a =0$. Multiply by $a$ to get $a\lambda^2 + b\lambda + c = 0$. 
+
+
+
+### Inhomogenous Differential Equations
+
+So far, we've seen differential equations of the form $u' - Au = 0$. But what if the right hand side is some $q(t)$ instead? We can use *integrating factors* to solve this. Multiply both sides by $e^{-At}$:
+$$
+e^{-At}u' - e^{-At}Au = a^{-At}q(t)
+$$
+By the product rule, the left hand side is just the derivative of $e^{-At}u$. This lets its integrate both sides from $0$ to $T$.  
+$$
+e^{-AT}u - u(0) = \int_0^T a^{-At}q(t)\, dt
+$$
+Multiply by $e^{-AT}$ to get $u = e^{-AT}u(0) + \int_0^T a^{-A(T-t)}q(t)\, dt$.
+
+Conceptually, we're adding up a bunch of different copies of our homogenous equation $y'=Ay$, but with different starting conditions $q(t)$ and shifted forward in time. 
 
 
 
@@ -91,31 +107,19 @@ With partial differential equations (where we can be differentiating with respec
 
 ### Functions are vectors 
 
-Functions $f : Y \to Z$ form a vector space when $Z$ is a field. For example, we could form a basis from the delta functions for different values of $Y$, or we could use the Fourier basis. It’s also pretty easy to see how they form a field. This means that functions $g : X \to Y \to Z$ are also vector spaces, but over the field of functions in $Y \to Z$.  If we have a function $u(x,y) : (X,Y) \to Z$, therefore, we can express it both as $X \to Y \to Z$ (making it a vector space over functions $Y \to Z$) and as $Y \to X \to Z$ (making it a vector space over functions $X \to Z$). To be more concrete, we can both think about $u(x,y)$ as a linear combination of basis functions $u_i(x)$ where the coefficients $c_i(y)$ depend on $y$, as well as a linear combination of basis functions $u_i(y)$ where the coefficients $c_i(x)$ depend on $x$. In other words, any function $u(x,y)$ can be written as $c_iu_i(x)u_i(y)$. 
-
-
-
-### Linear operators have eigenvectors
-
-Say $f : A \to B$ is a linear function and $A$ is a vector space. Then, for any $u \in A$, $f(u) = f(c_iu_i) = c_if(u_i)$, where the $u_i$ are a basis for $A$. Specifically, you can choose $u_i$ to be an eigenvector basis for $f$, so that $f(c_iu_i) = c_i \lambda_i u_i$ for eigenvalues $\lambda_i$. The obvious example of this is where the $A$ is a vector and $f$ is a matrix. But as we know from above, $A$ could also be a function, which would make $f$ an operator: a map from functions to functions, like the derivative. 
-
-You can express functions in multiple bases at the same time. Say $g : A \to B$ as well, with eigenbasis $v_j$ and eigenvalues $\phi_j$. Then we can express each of the $u_i$ which are the eigenbasis for $f$, as a linear combination of $a_{ij} v_j$. In other words, $u =c_i a_{ij} v_j$, and $f(u)= \lambda_i \phi_j c_i a_{ij} v_j$. This is partially useful when $f$ and $g$ are different partial differentiation operators.  
+Functions $f : Y \to Z$ form a vector space when $Z$ is a field. For example, we could form a basis from the delta functions for different values of $Y$, or we could use the Fourier basis. It’s also pretty easy to see how they form a field. This means that functions $g : X \to Y \to Z$ are also vector spaces, but over the field of functions in $Y \to Z$.  If we have a function $u(x,y) : (X,Y) \to Z$, therefore, we can express it both as $X \to Y \to Z$ (making it a vector space over functions $Y \to Z$) and as $Y \to X \to Z$ (making it a vector space over functions $X \to Z$). To be more concrete, we can both think about $u(x,y)$ as a linear combination of basis functions $u_i(x)$ where the coefficients $c_i(y)$ depend on $y$, as well as a linear combination of basis functions $u_i(y)$ where the coefficients $c_i(x)$ depend on $x$. In other words, any function $u(x,y)$ can be written as $c_{ij}u_i(x)u_j(y)$. 
 
 
 
 ### Eigenfunctions of derivatives are exponentials
 
-If the vector space $A$ we’re looking at consists of functions of a single argument, then when $\frac{d^n}{dx^n}v_i=\lambda^n v_i$,  $v_i(x)=e^{\lambda x}$. This is the basis used the Laplace transform. 
-
-If the vector space contains functions $u(x,y)$ of multiple arguments, when $\frac{\partial^n u_i}{\partial x^n} = \lambda^n u_i$, $u_i(x,y) = e^{\lambda x}u_i(y)$.
-
-For second derivatives, we can also use the Fourier basis $u_i(x,y) = e^{-\mathbf{i} \lambda x} u_i(y)$ . 
+Say $f : A \to B$ is a linear function and $A$ is a vector space. Then, for any $u \in A$, $f(u) = f(c_iu_i) = c_if(u_i)$, where the $u_i$ are a basis for $A$. Specifically, you can choose $u_i$ to be an eigenvector basis for $f$, so that $f(c_iu_i) = c_i \lambda_i u_i$ for eigenvalues $\lambda_i$. If the vector space $A$ we’re looking at consists of functions of a single argument, then when $\frac{d^n}{dx^n}v_i=\lambda^n v_i$,  $v_i(x)=e^{\lambda x}$.  If the vector space contains functions $u(x,y)$ of multiple arguments, when $\frac{\partial^n u_i}{\partial x^n} = \lambda^n u_i$, $u_i(x,y) = e^{\lambda x}u_i(y)$.
 
 
 
 ### Solving homogeneous equations
 
-Say we know that $A\frac{d^2 u}{dx} + B \frac{du}{dx} + Cu = 0$. We can express $u$ in the derivative’s eigenfunction basis to get $(A\lambda_i^2 + B \lambda_i + C)c_i e^{\lambda_i t}=0$, which simplifies to $A\lambda_i^2 + B\lambda_i + C = 0$ (the “characteristic equation”). This means that the only eigenfunctions that make up $u$ are those with eigenvalues that are the roots of the characteristic equation.
+Say we know that $A\frac{d^2 u}{dx} + B \frac{du}{dx} + Cu = 0$. We can express $u$ in the derivative’s eigenfunction basis to get $(A\lambda_i^2 + B \lambda_i + C)c_i e^{\lambda_i t}=0$, which simplifies to $A\lambda_i^2 + B\lambda_i + C = 0$ (once again giving us the characteristic equation). This means that the only eigenfunctions that make up $u$ are those with eigenvalues that are the roots of the characteristic equation.
 
 We can solve a system of linear equations to get the coefficients $c_i$. If we know the initial conditions $u(0)$ and $\partial_x u(0)$,  when $x=0$, we get that the sum $c_i = u(0)$, and $c_i \lambda_i = \partial_x u(0)$. If, alternately, we know $u(0)$ and $u(X)$ for some $X$, the second equation in the system becomes $c_ie^{\lambda_i T} = u(T)$, which is still linear in the $c_i$.   
 
@@ -123,5 +127,5 @@ We can solve a system of linear equations to get the coefficients $c_i$. If we k
 
 ### Separation of Variables
 
-Partial differential equations of the form $\partial^n_x u = k^m \partial^m_y u$ are called “separable”. To find what $u(x,y)$ is, we express it in the basis $c_i u_i(x) u_i(y)$. The differential equation tells us that $c_i u_i(y) \partial^n_x u_i(x) = k^m c_i u_i(x) \partial^m_y u_i(y)$. Considering each component of the sum separately, we get $\frac{\partial^n_x u_i(x)}{u_i(x)} = k^m \frac{\partial^m_y u_i(y)}{u_i(y)}$. As one side of the equation is only a function of $x$ and the other is only a function of $y$, both must equal a constant. Call this $\lambda^n$. We get $\partial_x^n u_i(x) = \lambda^n u_i(x)$, which means $u_i(x)=e^{\lambda x}$. For the other side, $\partial_y^m u_i(y) = \frac{\lambda^m}{k^m} u_i(y)$, which means $u_i(y) = e^{\frac{\lambda y}{k}}$. Together, we find that  $u_i(x,y)=e^{\lambda (x + \frac{\lambda y}{k})}$. 
+Partial differential equations of the form $\partial^n_x u = k^m \partial^m_y u$ are called “separable”. To find what $u(x,y)$ is, we express it in the basis $c_i u_i(x) u_i(y)$. The differential equation tells us that $c_{ij} u_i(y) \partial^n_x u_j(x) = k^m c_{ij} u_j(x) \partial^m_y u_i(y)$. Considering each component of the sum separately, we get $\frac{\partial^n_x u_i(x)}{u_i(x)} = k^m \frac{\partial^m_y u_i(y)}{u_i(y)}$. As one side of the equation is only a function of $x$ and the other is only a function of $y$, both must equal a constant. Call this $\lambda^n$. We get $\partial_x^n u_i(x) = \lambda^n u_i(x)$, which means $u_i(x)=e^{\lambda x}$. For the other side, $\partial_y^m u_i(y) = \frac{\lambda^m}{k^m} u_i(y)$, which means $u_i(y) = e^{\frac{\lambda y}{k}}$. Together, we find that  $u_i(x,y)=e^{\lambda (x + \frac{\lambda y}{k})}$. 
 
