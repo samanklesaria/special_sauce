@@ -1,8 +1,8 @@
-I've been wanting to get better at R (as dplyr and ggplot put pandas and seaborn to shame) so I thought I'd try to use it for Advent of Code this year. Overall, the language feels like an uglier version of Julia. Here's what I have so far.
+I've been wanting to get better at R (as dplyr and ggplot put pandas and seaborn to shame) so I thought I'd try to use it for Advent of Code this year. Overall, the language feels like a shittier version of Julia. Here's what I have so far.
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
-Sum the discrepencies between two sorted lists. This is essentially the same as the Julia version. 
+Sum the discrepencies between two sorted lists. 
 
 ```R
 day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
