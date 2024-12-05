@@ -2,11 +2,15 @@ I've been wanting to get better at R, so I thought I'd try to use it for Advent 
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
+Sum the discrepencies between two sorted lists. 
+
 ```R
 day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
 ```
 
 [Day 2](https://adventofcode.com/2024/day/2)
+
+Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. 
 
 ```R
 day2 <- function(reports) {
@@ -20,6 +24,8 @@ day2 <- function(reports) {
 
 [Day 3](https://adventofcode.com/2024/day/3)
 
+Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`. 
+
 ```R
 day3 <- function(s) {
   results <- regmatches(s, gregexec("mul\\((\\d+),(\\d+)\\)", s))[[1]]
@@ -28,6 +34,8 @@ day3 <- function(s) {
 ```
 
 [Day 4](https://adventofcode.com/2024/day/4)
+
+Find the number of times the string "XMAS" can be found in a given word search. 
 
 ```R
 day4 <- function(img) {
