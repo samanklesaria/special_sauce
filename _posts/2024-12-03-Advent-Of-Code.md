@@ -27,3 +27,20 @@ day3 <- function(s) {
 }
 ```
 
+[Day 4](https://adventofcode.com/2024/day/4)
+
+```R
+day4 <- function(img) {
+  a <- 0:3
+  c <- 0
+  for (i in 0:9) for (j in 1:10) {
+      for (dx in -1:1) for (dy in -1:1) {
+        ix <- 10 * (i + a * dx) + (j + a * dy)
+        if (all(ix > 0) & all(ix <= length(img)))
+          c <- c + ("XMAS" == paste(img[ix], collapse=""))
+      }
+  }
+  c
+}
+```
+
