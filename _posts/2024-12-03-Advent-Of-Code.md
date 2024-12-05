@@ -1,4 +1,4 @@
-I've been wanting to get better at R, so I thought I'd try to use it for Advent of Code this year. Here's what I have so far.
+I've been wanting to get better at R (as dplyr and ggplot put pandas and seaborn to shame) so I thought I'd try to use it for Advent of Code this year. Overall, the language feels like an uglier version of Julia. Here's what I have so far.
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
@@ -24,7 +24,7 @@ day2 <- function(reports) {
 
 [Day 3](https://adventofcode.com/2024/day/3)
 
-Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`. 
+Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`. 
 
 ```R
 day3 <- function(s) {
@@ -49,6 +49,29 @@ day4 <- function(img) {
       }
   }
   c
+}
+```
+
+[Day 5](https://adventofcode.com/2024/day/5)
+
+Find the subset of sequences that obey a given partial order. Sum their middle elements.
+
+```R
+library(r2r)
+day5 <- function(pred_rules, seqs) {
+  h <- hashset()
+  for (r in pred_rules) insert(h, r)
+  mask <- sapply(seqs, function(seq) {
+    for (i in 1:(length(seq) - 1)) {
+      for (j in (i:length(seq))) {
+        if (query(h, seq[c(j,i)])) return(F)
+      }
+    }
+    T
+  })
+  sum(as.integer(lapply(seqs[mask], function(seq) {
+    seq[[ceiling(length(seq) / 2)]]
+  })))
 }
 ```
 
