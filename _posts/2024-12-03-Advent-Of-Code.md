@@ -64,6 +64,8 @@ day4 <- function(img) {
 
 Find the subset of sequences that obey a given partial order. Sum their middle elements.
 
+The best way to do this would be to encode all the "comes before" relationships as edges in a graph and then check if the graph has loops, which we can do in linear time. But a simpler quadratic time solution is just to check if any of the "comes before" relationships in the sequence disobey the given partial order.
+
 ```R
 library(r2r)
 day5 <- function(pred_rules, seqs) {
@@ -97,3 +99,13 @@ function day5(pred_rules, seqs)
 end
 ```
 
+Using `Graphs.jl`, the linear time version would have something like
+
+```julia
+h = DiGraph(Edge.(pred_rules))
+ok = filter(seqs) do s
+  !is_cyclic(union(h, DiGraph(Edge.(zip(s, drop(s, 1))))))
+end
+```
+
+Although R does have a `graph` package, we'd have to write our own `is_cyclic` function.
