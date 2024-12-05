@@ -2,7 +2,7 @@ I've been wanting to get better at R (as dplyr and ggplot put pandas and seaborn
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
-Sum the discrepencies between two sorted lists. 
+Sum the discrepencies between two sorted lists. This is essentially the same as the Julia version. 
 
 ```R
 day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
@@ -10,7 +10,7 @@ day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
 
 [Day 2](https://adventofcode.com/2024/day/2)
 
-Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. 
+Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. R's negative indexing behavior works well here. 
 
 ```R
 day2 <- function(reports) {
@@ -32,6 +32,14 @@ day3 <- function(s) {
   sum(as.numeric(results[2,]) * as.numeric(results[3,]))
 }
 ```
+
+The lack of regular expression literals gets annoying here. This is a little nicer in Julia:
+
+```julia
+day3(s) = sum(prod(parse.(Int, a)) for a in eachmatch(r"mul\((\d+),(\d+)\)", s))
+```
+
+
 
 [Day 4](https://adventofcode.com/2024/day/4)
 
@@ -63,7 +71,7 @@ day5 <- function(pred_rules, seqs) {
   for (r in pred_rules) insert(h, r)
   mask <- sapply(seqs, function(seq) {
     for (i in 1:(length(seq) - 1)) {
-      for (j in (i:length(seq))) {
+      for (j in ((i+1):length(seq))) {
         if (query(h, seq[c(j,i)])) return(F)
       }
     }
@@ -73,5 +81,19 @@ day5 <- function(pred_rules, seqs) {
     seq[[ceiling(length(seq) / 2)]]
   })))
 }
+```
+
+This one would be easier with Julia's list comprehensions. For example:
+
+```julia
+function day5(pred_rules, seqs)
+    h = Set(pred_rules)
+    ok = filter(seqs) do s
+        !any(s[[j,i]] ∈ h
+            for i in 1:(length(s) - 1)
+            for j in (i+1):length(s))
+    end
+    sum(s[ceil(Int, length(s) / 2)] for s in ok)
+end
 ```
 
