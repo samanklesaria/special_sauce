@@ -62,50 +62,19 @@ day4 <- function(img) {
 
 [Day 5](https://adventofcode.com/2024/day/5)
 
-Find the subset of sequences that obey a given partial order. Sum their middle elements.
-
-The best way to do this would be to encode all the "comes before" relationships as edges in a graph and then check if the graph has loops, which we can do in linear time. But a simpler quadratic time solution is just to check if any of the "comes before" relationships in the sequence disobey the given partial order.
-
-```R
-library(r2r)
-day5 <- function(pred_rules, seqs) {
-  h <- hashset()
-  for (r in pred_rules) insert(h, r)
-  mask <- sapply(seqs, function(seq) {
-    for (i in 1:(length(seq) - 1)) {
-      for (j in ((i+1):length(seq))) {
-        if (query(h, seq[c(j,i)])) return(F)
-      }
-    }
-    T
-  })
-  sum(as.integer(lapply(seqs[mask], function(seq) {
-    seq[[ceiling(length(seq) / 2)]]
-  })))
-}
-```
-
-This one would be easier with Julia's list comprehensions. For example:
+Find the subset of sequences that obey a set of "comes before" rules. Sum their middle elements. Then rearrange the the disqualified sequences so that they no longer break the ordering rules and sum the rearrangements' middle elements as well. 
 
 ```julia
-function day5(pred_rules, seqs)
-    h = Set(pred_rules)
-    ok = filter(seqs) do s
-        !any(s[[j,i]] ∈ h
-            for i in 1:(length(s) - 1)
-            for j in (i+1):length(s))
-    end
-    sum(s[ceil(Int, length(s) / 2)] for s in ok)
+function sort_day5(pred_rules, seqs)
+	h = Set(pred_rules)
+	sorted = map(seqs) do s
+		sort(s; lt=(a,b)->(a=>b)∈h) == s
+	end
+  mask = sorted .== seqs
+  map([sorted[mask], sorted[.~mask]]) do sub_sorted
+    sum([s[ceil(Int, length(s) / 2)] for s in sub_sorted])
+  end
 end
 ```
 
-Using `Graphs.jl`, the linear time version would have something like
-
-```julia
-h = DiGraph(Edge.(pred_rules))
-ok = filter(seqs) do s
-  !is_cyclic(union(h, DiGraph(Edge.(zip(s, drop(s, 1))))))
-end
-```
-
-Although R does have a `graph` package, we'd have to write our own `is_cyclic` function.
+... yeah, that was in Julia instead. R doesn't allow you to pick your `<=` operator like Julia does, and I didn't feel like re-writing merge sort. 
