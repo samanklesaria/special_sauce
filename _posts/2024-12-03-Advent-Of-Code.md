@@ -1,4 +1,4 @@
-I've been wanting to get better at R (as dplyr and ggplot put pandas and seaborn to shame) so I thought I'd try to use it for Advent of Code this year. Overall, the language feels like a shittier version of Julia. Here's what I have so far.
+I've been playing Advent of Code this year. I started writing solutions in R, but soon realized I was better served by a more general purpose language. Julia took its place. 
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
@@ -10,33 +10,53 @@ day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
 
 [Day 2](https://adventofcode.com/2024/day/2)
 
-Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. R's negative indexing behavior works well here. 
+Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. 
 
-```R
-day2 <- function(reports) {
-  sum(apply(reports, 1, function(a) {
-    diffs <- a[-length(a)] - a[-1]
-    adiffs <- abs(diffs)
-    (all(diffs >= 0) | all(diffs <= 0)) & all(adiffs >= 1) & all(adiffs <= 3)
-  }))
-}
+```julia
+day2(reports) = sum(map(reports) do r
+	δ = r[2:end] .- r[1:end-1]
+	Δ = abs.(δ)
+	(all(δ .>= 0) | all(δ .<= 0)) & all(Δ .>= 1) & all(Δ .<= 3)
+end)
 ```
+
+For part two, we allow one of the items in each row to be ignored. 
+
+```julia
+day2_2(reports) = sum(map(reports) do r
+	mapreduce(|, 1:length(r)) do damped
+    rm = r[sparsevec([damped], [true], length(r))]
+    δ = rm[2:end] .- rm[1:end-1]
+		Δ = abs.(δ)
+    (all(δ .>= 0) | all(δ .<= 0)) & all(Δ .>= 1) & all(Δ .<= 3)
+	end
+end)
+```
+
+
 
 [Day 3](https://adventofcode.com/2024/day/3)
 
 Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`. 
 
-```R
-day3 <- function(s) {
-  results <- regmatches(s, gregexec("mul\\((\\d+),(\\d+)\\)", s))[[1]]
-  sum(as.numeric(results[2,]) * as.numeric(results[3,]))
-}
-```
-
-The lack of regular expression literals gets annoying here. This is a little nicer in Julia:
-
 ```julia
 day3(s) = sum(prod(parse.(Int, a)) for a in eachmatch(r"mul\((\d+),(\d+)\)", s))
+```
+
+For part 2, ignore patterns after the string `don't()` and before the string `do()`. 
+
+```julia
+day3_2(s) = foldl(eachmatch(r"do\(\)|don't\(\)|mul\((\d+),(\d+)\)", s), init=0=>true) do (sofar, state), a
+	if a.match == "do()"
+		sofar=>true
+	elseif a.match == "don't()"
+		sofar=>false
+	elseif state
+		(sofar + prod(parse.(Int, a)))=>state
+	else
+		sofar=>state
+	end
+end
 ```
 
 
@@ -45,27 +65,41 @@ day3(s) = sum(prod(parse.(Int, a)) for a in eachmatch(r"mul\((\d+),(\d+)\)", s))
 
 Find the number of times the string "XMAS" can be found in a given word search. 
 
-```R
-day4 <- function(img) {
-  a <- 0:3
-  c <- 0
-  for (i in 0:9) for (j in 1:10) {
-      for (dx in -1:1) for (dy in -1:1) {
-        ix <- 10 * (i + a * dx) + (j + a * dy)
-        if (all(ix > 0) & all(ix <= length(img)))
-          c <- c + ("XMAS" == paste(img[ix], collapse=""))
-      }
-  }
-  c
-}
+```julia
+function day4(img)
+    sum(
+        try
+            "XMAS" == join([img[i + a * dx, j + a * dy] for a in 0:3])
+        catch
+            false
+        end
+        for i in 1:size(img, 1) for j in 1:size(img, 2)
+        for dx in [-1, 0, 1] for dy in [-1, 0, 1]
+    )
+end
 ```
+
+For part two, find the number of times two "MAS" strings meet in an X shape. 
+
+```julia
+function day4_2(img)
+    sum(
+		any("MAS" == join([img[i + d * a, j + d * a] for a in -1:1])
+			for d in (-1,1)) &&
+		any("MAS" == join([img[i + d * a, j - d * a] for a in -1:1]) for d in (-1,1))
+        for i in 2:(size(img, 1)-1) for j in 2:(size(img, 2) - 1)
+    )
+end
+```
+
+
 
 [Day 5](https://adventofcode.com/2024/day/5)
 
-Find the subset of sequences that obey a set of "comes before" rules. Sum their middle elements. Then rearrange the the disqualified sequences so that they no longer break the ordering rules and sum the rearrangements' middle elements as well. 
+Find the subset of sequences that obey a set of "comes before" rules. Sum their middle elements. For part two, rearrange the the disqualified sequences so that they no longer break the ordering rules and sum the rearrangements' middle elements as well. Here I return the solutions to both parts at once. 
 
 ```julia
-function sort_day5(pred_rules, seqs)
+function day5(pred_rules, seqs)
 	h = Set(pred_rules)
 	sorted = map(seqs) do s
 		sort(s; lt=(a,b)->(a=>b)∈h) == s
@@ -77,4 +111,58 @@ function sort_day5(pred_rules, seqs)
 end
 ```
 
-... yeah, that was in Julia instead. R doesn't allow you to pick your `<=` operator like Julia does, and I didn't feel like re-writing merge sort. 
+
+
+[Day 6](https://adventofcode.com/2024/day/6)
+
+Collect the states visited by a specific automaton. The state is given by an ascii grid of characters. 
+
+```julia
+function day6(dims, pos, map)
+	dir = [-1, 0]
+	encountered = Set([pos])
+	while true
+		while pos + dir ∉ map
+			pos = pos .+ dir
+			if any(pos .<= 0) || any(pos .> dims)
+				return encountered
+			else
+				push!(encountered, pos)
+			end
+		end
+		dir = [0 1; -1 0] * dir
+	end
+end
+
+function parse_day6(lines)
+	dims = (length(lines), length(lines[1]))
+	parsed = permutedims(reshape(split(join(lines),""), reverse(dims)))
+	map = Set(collect.(Tuple.(findall(x->x=="#", parsed))))
+	pos = collect(Tuple(findfirst(x->x=="^", parsed)))
+	(dims, pos, map)
+end
+```
+
+
+
+[Day 7](https://adventofcode.com/2024/day/7)
+
+Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator. 
+
+```julia
+function combine(a,b)
+	(a * 10^(1 + trunc(Int, log10(b)))) + b
+end
+
+ops = FunctionWrapper{Int,Tuple{Int,Int}}[+, *, combine]
+
+function day7(eqs)
+	mask = [
+		any(result == foldl(zip(chosen, args[2:end]), init=args[1]) do x, (f, y)
+			f(x,y)
+		end for chosen in Iterators.product(fill(ops, length(args) - 1)...))
+	for (args, result) in eqs]
+	sum(last.(eqs[mask]))
+end
+```
+
