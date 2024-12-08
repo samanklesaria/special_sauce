@@ -4,8 +4,8 @@ I've been playing Advent of Code this year. I started writing solutions in R, bu
 
 Sum the discrepencies between two sorted lists. 
 
-```R
-day1 <- function(x,y) sum(abs(sort(x) - sort(y)))
+```julia
+day1(x) = sum(abs(sort(x) - sort(y)))
 ```
 
 [Day 2](https://adventofcode.com/2024/day/2)
@@ -134,12 +134,10 @@ function day6(dims, pos, map)
 	end
 end
 
-function parse_day6(lines)
-	dims = (length(lines), length(lines[1]))
-	parsed = permutedims(reshape(split(join(lines),""), reverse(dims)))
-	map = Set(collect.(Tuple.(findall(x->x=="#", parsed))))
-	pos = collect(Tuple(findfirst(x->x=="^", parsed)))
-	(dims, pos, map)
+function parse_day6(grid)
+	map = Set(collect.(Tuple.(findall(x->x=='#', grid))))
+	pos = collect(Tuple(findfirst(x->x=='^', grid)))
+	(shape(grid), pos, map)
 end
 ```
 
@@ -147,7 +145,7 @@ end
 
 [Day 7](https://adventofcode.com/2024/day/7)
 
-Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator. 
+Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator. 
 
 ```julia
 function combine(a,b)
@@ -163,6 +161,39 @@ function day7(eqs)
 		end for chosen in Iterators.product(fill(ops, length(args) - 1)...))
 	for (args, result) in eqs]
 	sum(last.(eqs[mask]))
+end
+```
+
+
+
+[Day 8](https://adventofcode.com/2024/day/8)
+
+... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links instead. 
+
+```julia
+function day8(img)
+	s = Set{CartesianIndex{2}}()
+	l = DefaultDict{Char, Vector{CartesianIndex{2}}}(Vector{CartesianIndex{2}})
+	for ix in CartesianIndices(img)
+		if img[ix] != '.'
+			push!(l[img[ix]], ix)
+		end
+	end
+	for ixs in values(l)
+		for (i,j) in Iterators.product(ixs, ixs)
+			if i == j continue end
+			dx = j - i
+			for a in 1:size(img, 1)
+				anode = i + a * dx
+				if checkbounds(Bool, img, anode)
+					push!(s, anode)
+				else
+					break
+				end
+			end
+		end
+	end
+	s
 end
 ```
 
