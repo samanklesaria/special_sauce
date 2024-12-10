@@ -27,10 +27,10 @@ For part two, we allow one of the items in each row to be ignored.
 ```julia
 day2_2(reports) = sum(map(reports) do r
     mapreduce(|, 1:length(r)) do damped
-    rm = r[sparsevec([damped], [true], length(r))]
-    δ = rm[2:end] .- rm[1:end-1]
-        Δ = abs.(δ)
-    (all(δ .>= 0) | all(δ .<= 0)) & all(Δ .>= 1) & all(Δ .<= 3)
+    	rm = r[sparsevec([damped], [true], length(r))]
+    	δ = rm[2:end] .- rm[1:end-1]
+      Δ = abs.(δ)
+    	(all(δ .>= 0) | all(δ .<= 0)) & all(Δ .>= 1) & all(Δ .<= 3)
     end
 end)
 ```
@@ -102,10 +102,10 @@ Find the subset of sequences that obey a set of "comes before" rules. Sum their 
 
 ```julia
 function day5(pred_rules, seqs)
-    h = Set(pred_rules)
-    sorted = map(seqs) do s
-        sort(s; lt=(a,b)->(a=>b)∈h) == s
-    end
+  h = Set(pred_rules)
+  sorted = map(seqs) do s
+      sort(s; lt=(a,b)->(a=>b)∈h) == s
+  end
   mask = sorted .== seqs
   map([sorted[mask], sorted[.~mask]]) do sub_sorted
     sum([s[ceil(Int, length(s) / 2)] for s in sub_sorted])
