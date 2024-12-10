@@ -285,8 +285,6 @@ function advent10(a)
 		end		
 	end
   dists = adjacency_matrix(g)^9
-  sum(dists[origins, targets])
-	dists = floyd_warshall_shortest_paths(g).dists
 	(sum(dists[origins, targets] .== 9), sum(dists[origins, targets] .> 0))
 end
 ```
