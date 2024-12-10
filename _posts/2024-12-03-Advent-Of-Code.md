@@ -240,38 +240,24 @@ end
 checksum(a) = sum(sum(id * (pos:(pos + amt - 1))) for (pos, (id, amt)) in a)
 ```
 
-Part 2:
+Part 2 is much the same, but we use a `SortedDict` for `spaces` instead of a vector. 
 
 ```julia
-function day9_2(s)
-	offset = 0
-	spaces = SortedDict{Int, Int}()
-	files = SortedDict{Int, Pair{Int, Int}}()
-	for (i, c) in enumerate(parse.(Int, collect(s)))
-		if i % 2 == 0
-			if c > 0 spaces[offset] = c end
-		else
-			files[offset] = div(i - 1, 2)=>c
-		end
-		offset += c
-	end
-	new_files = copy(files)
-	while !isempty(spaces) && !isempty(files)
-		(old_offset, (id, f_amt)) = last(files)
-		delete!(files, old_offset)
-		spc = findfirst(s_amt->s_amt >= f_amt, spaces)
-		if isnothing(spc) || old_offset <= first(spc) continue end
-		(offset, s_amt) = spc
-		delete!(spaces, offset)
-		stored_amt = min(f_amt, s_amt)
-		delete!(new_files, old_offset)
-		new_files[offset] = id=>stored_amt
-		s_resid = s_amt - stored_amt
-		if s_resid > 0
-			push!(spaces, (offset + stored_amt)=>s_resid)
-		end
-	end
-	new_files
+new_files = copy(files)
+while !isempty(spaces) && !isempty(files)
+  (old_offset, (id, f_amt)) = last(files)
+  delete!(files, old_offset)
+  spc = findfirst(s_amt->s_amt >= f_amt, spaces)
+  if isnothing(spc) || old_offset <= first(spc) continue end
+  (offset, s_amt) = spc
+  delete!(spaces, offset)
+  stored_amt = min(f_amt, s_amt)
+  delete!(new_files, old_offset)
+  new_files[offset] = id=>stored_amt
+  s_resid = s_amt - stored_amt
+  if s_resid > 0
+    spaces[offset + stored_amt] = s_resid
+  end
 end
 ```
 
