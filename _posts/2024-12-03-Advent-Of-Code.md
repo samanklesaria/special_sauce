@@ -284,7 +284,7 @@ function advent10(a)
             end
         end     
     end
-  dists = (adjacency_matrix(g)^9)[origins, targets]
+    dists = (adjacency_matrix(g)^9)[origins, targets]
     (sum(dists .== 9), sum(dists .> 0))
 end
 ```
