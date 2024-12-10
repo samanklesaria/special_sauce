@@ -170,7 +170,7 @@ end
 
 [Day 8](https://adventofcode.com/2024/day/8)
 
-... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links to read problem descriptions. 
+... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links to read the true problem descriptions. 
 
 ```julia
 function day8(img)
@@ -199,6 +199,8 @@ function day8(img)
 end
 ```
 
+
+
 [Day 9](https://adventofcode.com/2024/day/9)
 
 Part 1:
@@ -218,7 +220,7 @@ function day9(s)
 	end
 	reverse!(spaces)
 	while !isempty(spaces) && !isempty(files)
-		(old_offset, (id, f_amt)) = last(files)
+		(old_offset, (id, f_amt)) = poplast!(files)
 		(offset, s_amt) = pop!(spaces)
 		if old_offset <= offset return files end
 		stored_amt = min(f_amt, s_amt)
@@ -226,8 +228,6 @@ function day9(s)
 		f_resid = f_amt - stored_amt
 		if f_resid > 0
 			files[old_offset] = id=>f_resid
-		else
-			delete!(files, old_offset)
 		end
 		s_resid = s_amt - stored_amt
 		if s_resid > 0
@@ -240,13 +240,12 @@ end
 checksum(a) = sum(sum(id * (pos:(pos + amt - 1))) for (pos, (id, amt)) in a)
 ```
 
-Part 2 is much the same, but we use a `SortedDict` for `spaces` instead of a vector. 
+Part 2 is much the same, but we use a `SortedDict` for `spaces` instead of a vector. 
 
 ```julia
 new_files = copy(files)
 while !isempty(spaces) && !isempty(files)
-  (old_offset, (id, f_amt)) = last(files)
-  delete!(files, old_offset)
+  (old_offset, (id, f_amt)) = poplast!(files)
   spc = findfirst(s_amt->s_amt >= f_amt, spaces)
   if isnothing(spc) || old_offset <= first(spc) continue end
   (offset, s_amt) = spc
@@ -258,6 +257,37 @@ while !isempty(spaces) && !isempty(files)
   if s_resid > 0
     spaces[offset + stored_amt] = s_resid
   end
+end
+```
+
+
+
+[Day 10](https://adventofcode.com/2024/day/10)
+
+The code below returns the results for both parts. 
+
+```julia
+function advent10(a)
+	ids = LinearIndices(a)
+	origins = Int[]
+	targets = Int[]
+	g = SimpleDiGraph(length(a))
+	for ix in CartesianIndices(a)
+		if a[ix] == 0 push!(origins, ids[ix]) end
+		if a[ix] == 9 push!(targets, ids[ix]) end
+		for d in [CartesianIndex(1, 0), CartesianIndex(0, 1)]
+			for b in [1, -1]
+				ix2 = ix + b * d
+				if checkbounds(Bool, a, ix2) && a[ix2] - a[ix] == 1
+					add_edge!(g, ids[ix], ids[ix2])
+				end
+			end
+		end		
+	end
+  dists = adjacency_matrix(g)^9
+  sum(dists[origins, targets])
+	dists = floyd_warshall_shortest_paths(g).dists
+	(sum(dists[origins, targets] .== 9), sum(dists[origins, targets] .> 0))
 end
 ```
 
