@@ -8,6 +8,8 @@ Sum the discrepencies between two sorted lists.
 day1(x) = sum(abs(sort(x) - sort(y)))
 ```
 
+
+
 [Day 2](https://adventofcode.com/2024/day/2)
 
 Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. 
@@ -168,7 +170,7 @@ end
 
 [Day 8](https://adventofcode.com/2024/day/8)
 
-... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links instead. 
+... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links to read problem descriptions. 
 
 ```julia
 function day8(img)
@@ -194,6 +196,82 @@ function day8(img)
 		end
 	end
 	s
+end
+```
+
+[Day 9](https://adventofcode.com/2024/day/9)
+
+Part 1:
+
+```julia
+function day9(s)
+	offset = 0
+	spaces = Pair{Int,Int}[]
+	files = SortedDict{Int, Pair{Int, Int}}()
+	for (i, c) in enumerate(parse.(Int, collect(s)))
+		if i % 2 == 0
+			if c > 0 push!(spaces, offset=>c) end
+		else
+			files[offset] = div(i - 1, 2)=>c
+		end
+		offset += c
+	end
+	reverse!(spaces)
+	while !isempty(spaces) && !isempty(files)
+		(old_offset, (id, f_amt)) = last(files)
+		(offset, s_amt) = pop!(spaces)
+		if old_offset <= offset return files end
+		stored_amt = min(f_amt, s_amt)
+		files[offset] = id=>stored_amt
+		f_resid = f_amt - stored_amt
+		if f_resid > 0
+			files[old_offset] = id=>f_resid
+		else
+			delete!(files, old_offset)
+		end
+		s_resid = s_amt - stored_amt
+		if s_resid > 0
+			push!(spaces, (offset + stored_amt)=>s_resid)
+		end
+	end
+	files
+end
+
+checksum(a) = sum(sum(id * (pos:(pos + amt - 1))) for (pos, (id, amt)) in a)
+```
+
+Part 2:
+
+```julia
+function day9_2(s)
+	offset = 0
+	spaces = SortedDict{Int, Int}()
+	files = SortedDict{Int, Pair{Int, Int}}()
+	for (i, c) in enumerate(parse.(Int, collect(s)))
+		if i % 2 == 0
+			if c > 0 spaces[offset] = c end
+		else
+			files[offset] = div(i - 1, 2)=>c
+		end
+		offset += c
+	end
+	new_files = copy(files)
+	while !isempty(spaces) && !isempty(files)
+		(old_offset, (id, f_amt)) = last(files)
+		delete!(files, old_offset)
+		spc = findfirst(s_amt->s_amt >= f_amt, spaces)
+		if isnothing(spc) || old_offset <= first(spc) continue end
+		(offset, s_amt) = spc
+		delete!(spaces, offset)
+		stored_amt = min(f_amt, s_amt)
+		delete!(new_files, old_offset)
+		new_files[offset] = id=>stored_amt
+		s_resid = s_amt - stored_amt
+		if s_resid > 0
+			push!(spaces, (offset + stored_amt)=>s_resid)
+		end
+	end
+	new_files
 end
 ```
 
