@@ -289,3 +289,38 @@ function advent10(a)
 end
 ```
 
+
+
+[Day 11](https://adventofcode.com/2024/day/11)
+
+```julia
+function split_digits(a)
+	n = trunc(Int, log10(a)) + 1
+	if n % 2 == 1 return nothing end
+	half = 10^(div(n, 2))
+	part1 = div(a, half)
+	part2 = a % half
+	[part1, part2]
+end
+
+function blink(a)
+	if a == 0 return [1] end
+	s = split_digits(a)
+	isnothing(s) ? [a * 2024] : s
+end
+
+function blink_n(raw_a, n)
+	a = counter(raw_a)
+	for _ in 1:n
+		c = counter(Int)
+		for (k,v) in a
+			for k2 in blink(k)
+				inc!(c, k2, v)
+			end
+		end
+		a = c
+	end
+	a
+end
+```
+
