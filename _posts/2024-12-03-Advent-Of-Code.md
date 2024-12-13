@@ -320,7 +320,7 @@ function blink_n(raw_a, n)
 		end
 		a = c
 	end
-	a
+	sum(values(a))
 end
 ```
 
