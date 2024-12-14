@@ -65,7 +65,16 @@ end
 
 [Day 4](https://adventofcode.com/2024/day/4)
 
-Find the number of times the string "XMAS" can be found in a given word search. 
+Find the number of times the string "XMAS" can be found in a given word search. We can parse the input with a function that seems useful for a lot of these problems:
+
+```julia
+function ascii_grid(lines)
+    chars = Vector{Char}[Char.(codeunits(l)) for l in lines]
+    permutedims(reduce(hcat, chars))
+end
+```
+
+Once the input is read into the matrix `img`, we can continue with part 1
 
 ```julia
 function day4(img)
@@ -293,6 +302,20 @@ end
 
 [Day 11](https://adventofcode.com/2024/day/11)
 
+I added another generally useful utility function here:
+
+```julia
+function weighted_counter(a)
+    c = counter(eltype(a).parameters[1])
+    for (k, v) in a
+        inc!(c, k, v)
+    end
+    c
+end
+```
+
+Using this function, parts 1 and 2 are the same:
+
 ```julia
 function split_digits(a)
 	n = trunc(Int, log10(a)) + 1
@@ -312,15 +335,36 @@ end
 function blink_n(raw_a, n)
 	a = counter(raw_a)
 	for _ in 1:n
-		c = counter(Int)
-		for (k,v) in a
-			for k2 in blink(k)
-				inc!(c, k2, v)
-			end
-		end
-		a = c
+    a = weighted_counter(k2=>v for (k,v) in a for k2 in blink(k))
 	end
 	sum(values(a))
+end
+```
+
+
+
+[Day 12](https://adventofcode.com/2024/day/12)
+
+```julia
+function advent12(a)
+	ids = LinearIndices(a)
+	ds = IntDisjointSets(length(ids))
+	neighbors = zeros(Int, length(ids))
+	for ix in CartesianIndices(a)
+		for d in [CartesianIndex(1, 0), CartesianIndex(0, 1)]
+			for s in [1, -1]
+				ix2 = ix + s * d
+				if checkbounds(Bool, a, ix2) && a[ix] == a[ix2]
+					union!(ds, ids[ix], ids[ix2])
+					neighbors[ids[ix]] += 1
+				end
+			end
+		end
+	end
+	roots = find_root!.(Ref(ds), ids)
+	non_edges = weighted_counter(zip(roots, neighbors))
+	areas = counter(roots)
+	sum(areas[k] * (4 * areas[k] - non_edges[k]) for (k,v) in areas)
 end
 ```
 
