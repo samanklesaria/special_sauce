@@ -345,6 +345,17 @@ end
 
 [Day 12](https://adventofcode.com/2024/day/12)
 
+Both parts use this auxiliary function:
+
+```julia
+function same_along(a, ix, d)
+	ix2 = ix + d
+	checkbounds(Bool, a, ix2) && a[ix] == a[ix2]
+end
+```
+
+Part 1 calculates the neighbors of each position with the same label.
+
 ```julia
 function advent12(a)
 	ids = LinearIndices(a)
@@ -365,6 +376,38 @@ function advent12(a)
 	non_edges = weighted_counter(zip(roots, neighbors))
 	areas = counter(roots)
 	sum(areas[k] * (4 * areas[k] - non_edges[k]) for (k,v) in areas)
+end
+```
+
+Part 2 calculates the number of corners each position contributes.
+
+```julia
+rot(d) = CartesianIndex(([0 1; -1 0] * collect(Tuple(d)))...)
+
+function advent12_2(a)
+	ids = LinearIndices(a)
+	ds = IntDisjointSets(length(ids))
+	corners = zeros(Int, length(ids))
+	for ix in CartesianIndices(a)
+		for d in [CartesianIndex(1, 0), CartesianIndex(0, 1)]
+			for s in [1, -1]
+				if same_along(a, ix, d * s)
+					union!(ds, ids[ix], ids[ix + s * d])
+					rotated = rot(d*s)
+					diag = rotated + (s * d)
+					if same_along(a, ix, rotated) && !same_along(a, ix, diag)
+						corners[ids[ix]] += 1
+					end
+				elseif !same_along(a, ix, rot(d * s))
+					corners[ids[ix]] += 1
+				end
+			end
+		end
+	end
+	roots = find_root!.(Ref(ds), ids)
+	corner_sums = weighted_counter(zip(roots, corners))
+	areas = counter(roots)
+	sum(v * corner_sums[k] for (k,v) in areas)
 end
 ```
 
