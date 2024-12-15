@@ -411,3 +411,42 @@ function advent12_2(a)
 end
 ```
 
+[Day 13](https://adventofcode.com/2024/day/13)
+
+This problem was to find positive integer vectors $v$ to minimize $(3, 1)^Tv$ such that $Av = p$ for various values of $A$ and $p$. My initial idea was to use an ILP solver.
+
+```julia
+function advent13(itr)
+	s = Iterators.Stateful(itr)
+	v = Variable(2, Positive(), IntVar)
+	total = 0.0
+	while true
+		a = parse.(Float64, collect(match(r"X\+(\d+), Y\+(\d+)", popfirst!(s))))
+		b = parse.(Float64, collect(match(r"X\+(\d+), Y\+(\d+)", popfirst!(s))))
+		ab = hcat(a, b)
+		prize = parse.(Float64, collect(match(r"X=(\d+), Y=(\d+)", popfirst!(s))))
+		problem = minimize(dot([3, 1], v), [ab * v == prize])
+		solve!(problem, HiGHS.Optimizer; silent=true)
+		if problem.status == MathOptInterface.OPTIMAL
+			total += problem.optval
+		end
+		if isempty(s)
+			return Int(total)
+		end
+		popfirst!(s)
+	end
+end
+```
+
+But the answer it provided for part 2 of the problem doesn't match what Advent of Code was looking for. After further investigation, all the input matrices $A$ were non-singular, so I didn't need to worry about the optimization part at all. I could just solve $A^{-1}p$  and check if the result was an integer.
+
+```julia
+result = ab \ prize
+rresult = round.(result)
+if all(abs.(result - rresult) .< 1e-4)
+  total += dot([3,1], result)
+end
+```
+
+This ended up giving the answer Advent of Code expected. 
+
