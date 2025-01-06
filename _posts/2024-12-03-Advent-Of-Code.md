@@ -1,18 +1,17 @@
-I've been playing Advent of Code this year. I started writing solutions in R, but soon realized I was better served by a more general purpose language. Julia took its place. 
+I've been playing Advent of Code this year. I started writing solutions in R, but soon realized I was better served by a more general purpose language. Julia took its place.
 
 [Day 1](https://adventofcode.com/2024/day/1)
 
-Sum the discrepencies between two sorted lists. 
+Sum the discrepencies between two sorted lists.
 
 ```julia
 day1(x) = sum(abs(sort(x) - sort(y)))
 ```
 
 
-
 [Day 2](https://adventofcode.com/2024/day/2)
 
-Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3. 
+Find the number of rows that are either increasing or decreasing and for which increments are at least 1 but no more than 3.
 
 ```julia
 day2(reports) = sum(map(reports) do r
@@ -22,7 +21,7 @@ day2(reports) = sum(map(reports) do r
 end)
 ```
 
-For part two, we allow one of the items in each row to be ignored. 
+For part two, we allow one of the items in each row to be ignored.
 
 ```julia
 day2_2(reports) = sum(map(reports) do r
@@ -39,13 +38,13 @@ end)
 
 [Day 3](https://adventofcode.com/2024/day/3)
 
-Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`. 
+Find every instance of the pattern `mul(A,B)` where `A` and `B` are positive integers and return the sum of `A*B`.
 
 ```julia
 day3(s) = sum(prod(parse.(Int, a)) for a in eachmatch(r"mul\((\d+),(\d+)\)", s))
 ```
 
-For part 2, ignore patterns after the string `don't()` and before the string `do()`. 
+For part 2, ignore patterns after the string `don't()` and before the string `do()`.
 
 ```julia
 day3_2(s) = foldl(eachmatch(r"do\(\)|don't\(\)|mul\((\d+),(\d+)\)", s), init=0=>true) do (sofar, state), a
@@ -90,7 +89,7 @@ function day4(img)
 end
 ```
 
-For part two, find the number of times two "MAS" strings meet in an X shape. 
+For part two, find the number of times two "MAS" strings meet in an X shape.
 
 ```julia
 function day4_2(img)
@@ -107,7 +106,7 @@ end
 
 [Day 5](https://adventofcode.com/2024/day/5)
 
-Find the subset of sequences that obey a set of "comes before" rules. Sum their middle elements. For part two, rearrange the the disqualified sequences so that they no longer break the ordering rules and sum the rearrangements' middle elements as well. Here I return the solutions to both parts at once. 
+Find the subset of sequences that obey a set of "comes before" rules. Sum their middle elements. For part two, rearrange the the disqualified sequences so that they no longer break the ordering rules and sum the rearrangements' middle elements as well. Here I return the solutions to both parts at once.
 
 ```julia
 function day5(pred_rules, seqs)
@@ -126,7 +125,7 @@ end
 
 [Day 6](https://adventofcode.com/2024/day/6)
 
-Collect the states visited by a specific automaton. The state is given by an ascii grid of characters. 
+Collect the states visited by a specific automaton. The state is given by an ascii grid of characters.
 
 ```julia
 function day6(dims, pos, map)
@@ -156,7 +155,7 @@ end
 
 [Day 7](https://adventofcode.com/2024/day/7)
 
-Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator. 
+Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator.
 
 ```julia
 function combine(a,b)
@@ -179,7 +178,7 @@ end
 
 [Day 8](https://adventofcode.com/2024/day/8)
 
-... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links to read the true problem descriptions. 
+... I've realized that abstract descriptions of problems are increasingly going to be impossible to provide. Click the links to read the true problem descriptions.
 
 ```julia
 function day8(img)
@@ -249,7 +248,7 @@ end
 checksum(a) = sum(sum(id * (pos:(pos + amt - 1))) for (pos, (id, amt)) in a)
 ```
 
-Part 2 is much the same, but we use a `SortedDict` for `spaces` instead of a vector. 
+Part 2 is much the same, but we use a `SortedDict` for `spaces` instead of a vector.
 
 ```julia
 new_files = copy(files)
@@ -273,7 +272,7 @@ end
 
 [Day 10](https://adventofcode.com/2024/day/10)
 
-The code below returns the results for both parts. 
+The code below returns the results for both parts.
 
 ```julia
 function advent10(a)
@@ -291,7 +290,7 @@ function advent10(a)
                     add_edge!(g, ids[ix], ids[ix2])
                 end
             end
-        end     
+        end
     end
     dists = (adjacency_matrix(g)^9)[origins, targets]
     (sum(dists .> 0), sum(dists))
@@ -345,7 +344,7 @@ end
 
 [Day 12](https://adventofcode.com/2024/day/12)
 
-Both parts use this auxiliary function:
+In part 1, we calculate the perimeter of each same-character region in an ascii grid.
 
 ```julia
 function same_along(a, ix, d)
@@ -353,8 +352,6 @@ function same_along(a, ix, d)
 	checkbounds(Bool, a, ix2) && a[ix] == a[ix2]
 end
 ```
-
-Part 1 calculates the neighbors of each position with the same label.
 
 ```julia
 function advent12(a)
@@ -379,7 +376,7 @@ function advent12(a)
 end
 ```
 
-Part 2 calculates the number of corners each position contributes.
+In part 2, we count the number of corners of each region instead.
 
 ```julia
 rot(d) = CartesianIndex(([0 1; -1 0] * collect(Tuple(d)))...)
@@ -413,7 +410,7 @@ end
 
 [Day 13](https://adventofcode.com/2024/day/13)
 
-This problem was to find positive integer vectors $v$ to minimize $(3, 1)^Tv$ such that $Av = p$ for various values of $A$ and $p$. My initial idea was to use an ILP solver.
+This problem was to find positive integer vectors $v$ to minimize $(3, 1)^Tv$ such that $Av = p$ for various values of $A$ and $p$. My initial idea was to use an ILP solver.
 
 ```julia
 function advent13(itr)
@@ -448,5 +445,219 @@ if all(abs.(result - rresult) .< 1e-4)
 end
 ```
 
-This ended up giving the answer Advent of Code expected. 
+This ended up giving the answer Advent of Code expected.
 
+[Day 14](https://adventofcode.com/2024/day/14)
+
+This task is just simulating a dynamical system forward in time.
+
+```julia
+function advent14(ls, dims)
+	starts = Vector{Int}[]
+	velocities = Vector{Int}[]
+	for l in ls
+		d = parse.(Int, match(r"p=(\d+),(\d+) v=(-?\d+),(-?\d+)", l))
+		push!(starts, d[1:2])
+		push!(velocities, d[3:4])
+	end
+	S = stack(starts, dims=1)
+	v = stack(velocities, dims=1)
+	end_pos = mod.(S .+ T .* v, reshape(dims, (1,2)))
+	half = reshape((dims .- 1) ./ 2, (1,2))
+	mids = any(end_pos .== half, dims=2)[:, 1]
+	prod(values(counter(eachrow(end_pos[.!mids,:] .> half))))
+end
+```
+
+[Day 15](https://adventofcode.com/2024/day/15)
+
+```julia
+function advent15(g)
+	start = findfirst(g .== '@')
+	for instr in instrs
+		if instr == '<'
+			start = shove!(g, start, CartesianIndex(0, -1))
+		elseif instr == '>'
+			start = shove!(g, start, CartesianIndex(0, 1))
+		elseif instr == '^'
+			start = shove!(g, start, CartesianIndex(-1, 0))
+		elseif instr == 'v'
+			start = shove!(g, start, CartesianIndex(1, 0))
+		end
+	end
+	sum((ix[1] - 1)*100 + ix[2] - 1 for ix in findall(g .== 'O'))
+end
+
+function shove!(g, start, dir)
+	target = start + dir
+	if g[target] == '#'
+		return start
+	elseif g[target] == 'O'
+		next = shove!(g, target, dir)
+		if next == target return start end
+	end
+	g[target] = g[start]
+	g[start] = '.'
+	target
+end
+```
+
+[Day 16](https://adventofcode.com/2024/day/16)
+This is a graph problem in which the vertices are labeled with cartesian coordinates rather than integers (as the `Graphs` library expects).
+We'll need the following utility to translate between vertex labels and integers.
+```julia
+Base.@kwdef mutable struct IntMapper{K}
+    dict::Dict{K, Int} = Dict{K, Int}()
+    counter::Int = 0
+end
+
+function code_for(m::IntMapper{K}, a::K) where {K}
+    if !haskey(m.dict, a)
+        m.counter += 1
+        m.dict[a] = m.counter
+    end
+    m.dict[a]
+end
+```
+
+The problem itself its easily solved with Dijkstra's algorithm.
+
+```julia
+function advent16(g)
+	entries = []
+	m = IntMapper{Pair{CartesianIndex{2}, Bool}}()
+	for ix in CartesianIndices(g)
+		if g[ix] == '#' continue end
+		for (dir, offset) in enumerate([CartesianIndex(0,-1), CartesianIndex(-1, 0)])
+			ix2 = ix + offset
+			if checkbounds(Bool, g, ix2)
+				d = Bool(dir - 1)
+				push!(entries, (code_for(m, ix2=>d), code_for(m, ix=>d), 1))
+			end
+		end
+		push!(entries, (code_for(m, ix=>false), code_for(m, ix=>true), 1000))
+	end
+	endof = findfirst(isequal('E'), g)
+	start = findfirst(isequal('S'), g)
+	maze_end = m.counter + 1
+	append!(entries, [(code_for(m, endof=>d), maze_end, 1) for d in [true, false]])
+	graph = sparse(unzip(entries)..., maze_end, maze_end)
+	graph = graph + graph'
+	min_cost, preds = dijkstra(graph, code_for(m, start=>false), maze_end)
+	pred_codes = get_preds(preds, maze_end)
+	from_code = Dict(v=>k[1] for (k,v) in m.dict)
+	length(Set([from_code[c] for c in pred_codes if haskey(from_code, c)]))
+end
+```
+
+As part two of the problem requires all shortest paths rather than just a single one,
+we have to use a modified version of Dijkstra's algorithm.
+
+```julia
+function dijkstra(g, start, endof)
+	costs = Dict{Int, Float64}()
+	preds = DefaultDict{Int, Vector{Int}}(Vector{Int})
+	q = BinaryHeap(Base.By(last), [(0, start, 0.0)])
+	while !isempty(q)
+		pred,u,c = pop!(q)
+		if haskey(costs, u) && u == endof && c > costs[u]
+			return costs[endof], preds
+		elseif !haskey(costs, u) || costs[u] == c
+			push!(preds[u], pred)
+			if !haskey(costs, u)
+				costs[u] = c
+				for (v,w) in zip(findnz(g[:, u])...)
+					push!(q, (u, v, w + c))
+				end
+			end
+		end
+	end
+	costs[endof], preds
+end
+```
+
+[Day 17](https://adventofcode.com/2024/day/17)
+```julia
+combo(operand, registers) = operand >= 4 ? registers[operand - 3] : operand
+
+function step(op, operand, registers, results, pc)
+	if op == 0
+		registers[1] = div(registers[1], 1 << combo(operand, registers))
+	elseif op == 1
+		registers[2] = xor(registers[2], operand)
+	elseif op == 2
+		registers[2] = combo(operand, registers) & 0b111
+	elseif op == 3
+		if registers[1] != 0
+			return operand
+		end
+	elseif op == 4
+		registers[2] = xor(registers[2], registers[3])
+	elseif op == 5
+		push!(results, combo(operand, registers) & 0b111)
+	elseif op == 6
+		registers[2] = div(registers[1], 1 << combo(operand, registers))
+	elseif op == 7
+		registers[3] = div(registers[1], 1 << combo(operand, registers))
+	end
+	pc + 2
+end
+
+function advent17(prog, registers)
+	results = []
+	pc = UInt(0)
+	while true
+		pc = doit(prog[pc + 1], prog[pc + 2], registers, results, pc)
+		if pc >= length(prog)
+			return results
+		end
+	end
+end
+```
+
+The second part of the problem is completely different:
+
+```julia
+function advent17_2()
+	A_base = UInt64(0)
+	for c in Iterators.reverse(UInt8[2,4, 1,2, 7,5, 1,7 ,4,4, 0,3 ,5,5 ,3,0])
+		A_base = A_base << 3
+		options = map(0b0:0b111) do abit
+			A = A_base + abit
+			7 & (7 ⊻ (2 ⊻ (A & 7)) ⊻ (A >> (2 ⊻ (A & 7))))
+		end
+		println(Int.(sort(options)))
+		abit = findfirst(0b0:0b111) do abit
+			A = A_base + abit
+			c == 7 & (7 ⊻ (2 ⊻ (A & 7)) ⊻ (A >> (2 ⊻ (A & 7))))
+		end
+		A_base |= (abit - 1)
+	end
+	A_base
+end
+```
+
+[Day 25](https://adventofcode.com/2024/day/25)
+
+```julia
+function advent25(grids)
+	counter = 0
+	locks = []
+	keys = []
+	for grid in grids
+		if all(grid[1, :] .== '#')
+			push!(locks, findfirst.(isequal('.'), eachcol(grid)) .- 2)
+		else
+			push!(keys, size(grid, 1) .- findfirst.(isequal('#'), eachcol(grid)))
+		end
+	end
+	for l in locks
+		for k in keys
+			if all(l .+ k .<= 5)
+				counter += 1
+			end
+		end
+	end
+	counter
+end
+```
