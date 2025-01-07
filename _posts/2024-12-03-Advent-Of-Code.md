@@ -125,10 +125,13 @@ end
 
 [Day 6](https://adventofcode.com/2024/day/6)
 
-Collect the states visited by a specific automaton. The state is given by an ascii grid of characters.
+Collect the coordinates visited by robot that moves forward until it hits a wall, then rotates right. The state is given by an ascii grid of characters.
 
 ```julia
-function day6(dims, pos, map)
+function day6(grid)
+    map = Set(collect.(Tuple.(findall(x->x=='#', grid))))
+    pos = collect(Tuple(findfirst(x->x=='^', grid)))
+    dims = shape(grid)
     dir = [-1, 0]
     encountered = Set([pos])
     while true
@@ -143,12 +146,6 @@ function day6(dims, pos, map)
         dir = [0 1; -1 0] * dir
     end
 end
-
-function parse_day6(grid)
-    map = Set(collect.(Tuple.(findall(x->x=='#', grid))))
-    pos = collect(Tuple(findfirst(x->x=='^', grid)))
-    (shape(grid), pos, map)
-end
 ```
 
 
@@ -158,9 +155,7 @@ end
 Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator.
 
 ```julia
-function combine(a,b)
-    (a * 10^(1 + trunc(Int, log10(b)))) + b
-end
+combine(a,b) = (a * 10^(1 + trunc(Int, log10(b)))) + b
 
 ops = FunctionWrapper{Int,Tuple{Int,Int}}[+, *, combine]
 
@@ -503,8 +498,8 @@ end
 ```
 
 [Day 16](https://adventofcode.com/2024/day/16)
-This is a graph problem in which the vertices are labeled with cartesian coordinates rather than integers (as the `Graphs` library expects).
-We'll need the following utility to translate between vertex labels and integers.
+This is variation of shortest path finding on a graph, except that transitioning from moving horizontally to moving vertically
+introduces an extra cost of 1000 steps. I'll add the following general purpose utility to translate between vertex labels and integers.
 ```julia
 Base.@kwdef mutable struct IntMapper{K}
     dict::Dict{K, Int} = Dict{K, Int}()
@@ -520,7 +515,8 @@ function code_for(m::IntMapper{K}, a::K) where {K}
 end
 ```
 
-The problem itself its easily solved with Dijkstra's algorithm.
+To solve the problem, just create two vertices per grid position: one with a horizontal orientation and one with a vertical one. 
+The edges between these two copies have weight 1000. 
 
 ```julia
 function advent16(g)
@@ -577,6 +573,7 @@ end
 ```
 
 [Day 17](https://adventofcode.com/2024/day/17)
+Here, we're simulating a fictional CPU instructions set. 
 ```julia
 combo(operand, registers) = operand >= 4 ? registers[operand - 3] : operand
 
@@ -615,7 +612,8 @@ function advent17(prog, registers)
 end
 ```
 
-The second part of the problem is completely different:
+The second part of the problem is to identify the register value that would let
+a specific program for this instruction set be a Quine. 
 
 ```julia
 function advent17_2()
