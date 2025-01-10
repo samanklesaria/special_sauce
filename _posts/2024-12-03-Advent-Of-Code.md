@@ -515,8 +515,8 @@ function code_for(m::IntMapper{K}, a::K) where {K}
 end
 ```
 
-To solve the problem, just create two vertices per grid position: one with a horizontal orientation and one with a vertical one. 
-The edges between these two copies have weight 1000. 
+To solve the problem, just create two vertices per grid position: one with a horizontal orientation and one with a vertical one.
+The edges between these two copies have weight 1000.
 
 ```julia
 function advent16(g)
@@ -573,7 +573,7 @@ end
 ```
 
 [Day 17](https://adventofcode.com/2024/day/17)
-Here, we're simulating a fictional CPU instructions set. 
+Here, we're simulating a fictional CPU instructions set.
 ```julia
 combo(operand, registers) = operand >= 4 ? registers[operand - 3] : operand
 
@@ -613,7 +613,7 @@ end
 ```
 
 The second part of the problem is to identify the register value that would let
-a specific program for this instruction set be a Quine. 
+a specific program for this instruction set be a Quine.
 
 ```julia
 function advent17_2()
@@ -632,6 +632,33 @@ function advent17_2()
 		A_base |= (abit - 1)
 	end
 	A_base
+end
+```
+[Day 18](https://adventofcode.com/2024/day/18)
+
+Find the shortest path in a grid given a list of obstructions.
+
+```julia
+function advent18(locs, dims)
+	grid = ones(Bool, dims)
+	grid[locs] .= false
+	dijkstra(grid, CartesianIndex(1,1), CartesianIndex(dims))
+end
+```
+
+[Day 19](https://adventofcode.com/2024/day/19)
+
+Count the number of ways you can construct `text` out of substrings in `patterns`.
+
+```julia
+function advent19(patterns, text)
+	nways = Array{Int}(undef, length(text) + 1)
+	nways[1] = 1
+	for i in 1:length(text)
+		nways[i + 1] = sum(nways[i - length(p) + 1] for p in patterns
+			if length(p) <= i && text[i - length(p) + 1 : i] == p; init=0)
+	end
+	nways[end]
 end
 ```
 
