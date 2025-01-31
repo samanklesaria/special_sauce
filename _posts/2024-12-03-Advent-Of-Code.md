@@ -662,6 +662,29 @@ function advent19(patterns, text)
 end
 ```
 
+
+[Day 23](https://adventofcode.com/2024/day/23)
+
+Find the number of 3-cliques where at least one of the node ids starts with 't'.
+This is the same as subtracting the number of 3-cliques where no node id starts with 't'
+from the total number of 3-cliques. To find the number of 3-cliques, we can just raise the
+adjacency matrix to the third power. Each loop will counted twice per node: once clockwise,
+once counter clockwise. Each loop is also counted by three different nodes. 
+
+
+```julia
+cliques(g) = sum([amt / 2 for (ix, amt) in zip(findnz(diag(g^3))...)]) / 3
+
+function advent23(f)
+    m = IntMapper{SubString{String}}()
+    edges = [code_for.(Ref(m), split(line, '-')) for line in readlines(f)]
+    g = sparse(first.(edges), last.(edges), ones(length(edges)))
+    g2 = g + g'
+    mask = .~(startswith.(codes(m), 't'))
+    cliques(g2) - cliques(g2[mask, mask])
+end
+```
+
 [Day 25](https://adventofcode.com/2024/day/25)
 
 ```julia
