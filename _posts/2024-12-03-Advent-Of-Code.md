@@ -152,7 +152,7 @@ end
 
 [Day 7](https://adventofcode.com/2024/day/7)
 
-Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values  for which this is possible. Part 2 adds a digit concatenation operator.
+Check whether it's possible to get a given result value by inserting some sequence of `*` and `+`  operators in between a given list of arguments. Sum the result values for which this is possible. Part 2 adds a digit concatenation operator.
 
 ```julia
 combine(a,b) = (a * 10^(1 + trunc(Int, log10(b)))) + b
@@ -684,6 +684,62 @@ function advent23(f)
     cliques(g2) - cliques(g2[mask, mask])
 end
 ```
+
+[Day 24](https://adventofcode.com/2024/day/24)
+
+Simulate a DAG of logical operators. 
+
+
+```julia
+struct Op{F}
+    func::F
+    inputs::Vector{String}
+    output::String
+    Op(f::F, a, b) where {F} = new{F}(f, String.(a), String(b))
+end
+
+Base.@kwdef struct Prog
+    vals::DefaultDict{String,Int,Int} = DefaultDict{String, Int}(0)
+    ops::Vector{Op} = []
+end
+
+function advent24(file)
+    p = Prog()
+    for line in eachline(file)
+        process!(p, line)
+    end
+    while true
+        old_vals = copy(p.vals)
+        sim!(p)
+        if old_vals == p.vals
+            break
+        end
+    end
+    bits = sort(collect(filter(keys(p.vals)) do a
+        startswith(a, "z")
+    end))
+    sum([p.vals[b] << (i-1) for (i, b) in enumerate(bits)])
+end
+
+function sim!(p)
+    for op in p.ops
+        p.vals[op.output] = op.func([p.vals[a] for a in op.inputs]...)
+    end
+end
+
+function process!(p, line)
+    if !isnothing(local a = match(r"([^:]+): (\d)", line))
+        p.vals[a.captures[1]] = parse(Int, a.captures[2])
+    elseif !isnothing(local a = match(r"(\w+) XOR (\w+) -> (\w+)", line))
+        push!(p.ops, Op(xor, a.captures[1:2], a.captures[3]))
+    elseif !isnothing(local a = match(r"(\w+) AND (\w+) -> (\w+)", line))
+        push!(p.ops, Op(&, a.captures[1:2], a.captures[3]))
+    elseif !isnothing(local a = match(r"(\w+) OR (\w+) -> (\w+)", line))
+        push!(p.ops, Op(|, a.captures[1:2], a.captures[3]))
+    end
+end
+```
+
 
 [Day 25](https://adventofcode.com/2024/day/25)
 
