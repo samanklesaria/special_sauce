@@ -1,9 +1,9 @@
 ---
-title: Reviewing a simple election forecasting model
+title: Random Walks on Polls
 layout: none
 category: inference
 excerpt: >
-  The Economist published an explanation of their model of the US presidential election. This post implements a simplified form of that model. 
+  A while ago, the Economist published an explanation of their model of the 2016 US presidential election. This post implements a simplified form of that model. 
 ---
 
 <!DOCTYPE html>
@@ -11,7 +11,7 @@ excerpt: >
 <html lang="en">
 <head><meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Potus</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
+<title>An Election Forecast Model</title><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <style type="text/css">
     pre { line-height: 125%; }
 td.linenos .normal { color: inherit; background-color: transparent; padding-left: 5px; padding-right: 5px; }
@@ -7525,7 +7525,18 @@ a.anchor-link {
 </style>
 <!-- End of mermaid configuration --></head>
 <body class="jp-Notebook" data-jp-theme-light="true" data-jp-theme-name="JupyterLab Light">
-<main><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d6ec9fec-bb37-468f-b058-e92175f0b00f">
+<main>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=e13d1ef8-bc67-4fab-81a8-1f0888fa4859">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<h1 id="Election-Forecasting-with-a-Random-Walk-through-the-Polls">Election Forecasting with a Random Walk through the Polls<a class="anchor-link" href="#Election-Forecasting-with-a-Random-Walk-through-the-Polls">¶</a></h1>
+</div>
+</div>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs" id="cell-id=d6ec9fec-bb37-468f-b058-e92175f0b00f">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
